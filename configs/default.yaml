@@ -1,7 +1,7 @@
 # Sentinel-2 Refugee Camp Detection - Configuration
 # ================================================
 
-# Sentinel-2 bands to use
+# Sentinel-2 bands to download (raw)
 bands:
   - B02  # Blue (10m)
   - B03  # Green (10m)
@@ -10,13 +10,28 @@ bands:
   - B11  # SWIR1 (20m, resampled to 10m)
   - B12  # SWIR2 (20m, resampled to 10m)
 
+# Model input channels: RGB + NDVI + NDBI + SWIR_ratio = 6
+# Derived from raw bands, NOT raw bands directly
+input_channels:
+  - R      # B04
+  - G      # B03
+  - B      # B02
+  - NDVI   # (B08 - B04) / (B08 + B04)
+  - NDBI   # (B11 - B08) / (B11 + B08)
+  - SWIR_ratio  # B12 / B11
+
 # Tile parameters
-tile_size: 64          # pixels per side
-resolution: 10         # meters per pixel
-# => each tile covers 640m x 640m
+tile_size_download: 128    # pixels per side at download (1.28 km at 10m)
+tile_size_model: 64        # resize to this for the CNN
+resolution: 10             # meters per pixel
+
+# Multi-tile grid per camp location
+grid:
+  size: 3                  # 3x3 grid around each camp center
+  overlap_threshold: 0.3   # label positive if >30% overlaps camp polygon
 
 # Sentinel-2 search parameters
-cloud_threshold: 20    # max cloud cover percentage
+cloud_threshold: 20        # max cloud cover percentage
 date_range:
   - "2022-01-01"
   - "2023-12-31"
@@ -31,35 +46,45 @@ test_countries:
   - yemen
 
 # Negative sample generation
-negative_buffer_km: 10   # min distance from any camp
-negative_ratio: 3        # negatives per positive
+negative_buffer_km: 10     # min distance from any camp
+negative_ratio: 3          # negatives per positive (per category)
+negative_categories:        # explicit negative types
+  - rural                  # dispersed rural areas
+  - urban                  # formal dense cities
+  - barren                 # desert / bare soil / savanna
 
 # Model
 model:
   backbone: resnet18
   pretrained: true
-  in_channels: 6
-  num_classes: 1         # binary (sigmoid output)
-  freeze_epochs: 5       # freeze backbone for N epochs
+  in_channels: 6           # RGB + NDVI + NDBI + SWIR_ratio
+  num_classes: 1           # binary (sigmoid output)
+  freeze_epochs: 5         # freeze backbone for N epochs
   lr: 0.0001
   batch_size: 32
   max_epochs: 50
-  patience: 5            # early stopping patience
-  pos_weight: 3.0        # BCEWithLogitsLoss weight for positives
+  patience: 5              # early stopping patience
+  pos_weight: 3.0          # BCEWithLogitsLoss weight for positives
 
 # Augmentation
 augmentation:
-  random_rotation: true   # 90/180/270 degrees
+  random_rotation: true    # 90/180/270 degrees
   horizontal_flip: true
   vertical_flip: true
-  brightness_jitter: 0.1  # +/- 10% brightness
+  brightness_jitter: 0.1   # +/- 10% brightness
 
 # Normalization
 normalization:
   method: percentile
-  low: 2                  # 2nd percentile
-  high: 98                # 98th percentile
+  low: 2                   # 2nd percentile
+  high: 98                 # 98th percentile
 
 # Inference
 inference:
   confidence_threshold: 0.8  # for candidate detections
+  top_k: 50                  # Precision@Top-K evaluation
+
+# Data leakage prevention
+split:
+  by_scene: true             # never mix tiles from same Sentinel-2 scene
+  val_fraction: 0.2
