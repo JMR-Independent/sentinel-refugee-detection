@@ -29,6 +29,8 @@ COUNTRY_BOUNDS = {
     "chad": (7.44, 13.47, 23.45, 24.00),
     "ethiopia": (3.40, 32.99, 14.89, 47.99),
     "yemen": (12.11, 41.81, 19.00, 54.68),
+    "turkey": (35.80, 35.40, 42.10, 44.80),     # SE Turkey (refugee camp zone)
+    "uganda": (-1.50, 29.50, 4.20, 35.00),      # Uganda (hosts S. Sudan refugees)
 }
 
 # Known cities for urban negative samples (lat, lon)
@@ -38,6 +40,8 @@ URBAN_CENTERS = {
     "chad": [(12.11, 15.04), (9.14, 18.39)],            # N'Djamena, Sarh
     "ethiopia": [(9.02, 38.75), (7.68, 36.83)],         # Addis Ababa, Jimma
     "yemen": [(15.35, 44.21), (12.78, 45.04)],          # Sana'a, Aden
+    "turkey": [(37.00, 36.22), (37.07, 38.32)],         # Gaziantep, Sanliurfa
+    "uganda": [(0.32, 32.58), (3.03, 30.91)],           # Kampala, Arua
 }
 
 # Known informal settlement areas (NOT refugee camps) — hard negatives
@@ -48,6 +52,8 @@ INFORMAL_AREAS = {
     "chad": [(12.08, 15.06)],                            # N'Djamena periphery
     "ethiopia": [(8.98, 38.72), (9.05, 38.80)],         # Addis Ababa outskirts
     "yemen": [(15.33, 44.19), (12.80, 45.06)],          # Sana'a/Aden edges
+    "turkey": [(37.05, 36.25), (37.10, 38.35)],         # Gaziantep/Sanliurfa edges
+    "uganda": [(0.30, 32.55), (3.05, 30.93)],           # Kampala/Arua outskirts
 }
 
 

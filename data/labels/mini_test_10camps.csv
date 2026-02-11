@@ -1,0 +1,11 @@
+name,lat,lon,country,source,environment,tile_id
+Ain Issa,36.374,38.86,syria,unhcr_known,arido,camp_syria_000
+Aysaita,11.575,41.431,ethiopia,unhcr_hdx,arido,camp_ethiopia_001
+Deir Ballut,36.233,36.583,syria,unhcr_known,semiarido,camp_syria_002
+Bredjing,13.083,21.283,chad,unhcr_known,semiarido,camp_chad_003
+Kiryandongo,2.05,32.167,uganda,unhcr_known,vegetado,camp_uganda_004
+Belom,8.283,16.617,chad,unhcr_known,vegetado,camp_chad_005
+Kilis-Elbeyli,36.661,37.363,syria,unhcr_hdx,denso,camp_syria_006
+Dar es Salam,13.8,14.5,chad,unhcr_known,denso,camp_chad_007
+Mayfa IDP camp,15.433,50.15,yemen,unhcr_known,semiarido,camp_yemen_008
+Juba POC (UN House),4.833,31.617,south_sudan,unhcr_known,vegetado,camp_south_sudan_009

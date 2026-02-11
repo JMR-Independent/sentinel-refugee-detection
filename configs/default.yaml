@@ -53,9 +53,14 @@ date_range:
   - "2023-12-31"
 
 # Geographic split
+# NOTE: Uganda hosts South Sudanese refugees (Bidi Bidi, Palorinya, etc.)
+#       Turkey hosts Syrian refugees (border camps). Both added to train.
+#       Nakivale (Uganda, lat -0.8) removed — different biome.
 train_countries:
   - syria
   - south_sudan
+  - turkey        # Syrian refugee camps on Turkish border
+  - uganda        # South Sudanese refugee camps in northern Uganda
 test_countries:
   - chad
   - ethiopia
@@ -97,7 +102,7 @@ model:
   batch_size: 32           # use 16 if training at 128px
   max_epochs: 50
   patience: 5              # early stopping patience
-  pos_weight: 3.0          # BCEWithLogitsLoss weight for positives
+  pos_weight: auto         # "auto" uses n_neg/n_pos from train split
   context_weight: 0.5      # reduced loss weight for camp_context tiles (if corners included)
 
 # Augmentation
@@ -112,6 +117,9 @@ normalization:
   method: percentile
   low: 2                   # 2nd percentile
   high: 98                 # 98th percentile
+  max_tiles: 500           # sample up to N tiles for stats (None = all)
+  sample_pixels: 2000      # pixels per tile sampled for stats
+  seed: 42
 
 # Inference
 inference:
