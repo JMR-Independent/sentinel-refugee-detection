@@ -30,7 +30,11 @@ class CampTileDataset(Dataset):
         Resize tiles to this size (default 64).
     """
 
-    LABEL_MAP = {"camp": 1, "non-camp": 0, "negative": 0}
+    # camp_context = positive but with reduced confidence (grid corners)
+    LABEL_MAP = {"camp": 1, "camp_context": 1, "non-camp": 0, "negative": 0}
+
+    # Sample weights: camp_context gets reduced weight in loss
+    WEIGHT_MAP = {"camp": 1.0, "camp_context": 0.5, "non-camp": 1.0, "negative": 1.0}
 
     def __init__(self, manifest_path, split, transform=None,
                  normalize=True, norm_stats=None, model_size=64):
@@ -48,6 +52,7 @@ class CampTileDataset(Dataset):
         row = self.manifest.iloc[idx]
         tile = np.load(row["path"]).astype(np.float32)  # (C, H, W)
         label = self.LABEL_MAP.get(row["label"], 0)
+        weight = self.WEIGHT_MAP.get(row["label"], 1.0)
 
         if self.normalize and self.norm_stats is not None:
             tile = normalize_tile(tile, self.norm_stats)
@@ -59,7 +64,9 @@ class CampTileDataset(Dataset):
         if self.transform is not None:
             tile = self.transform(tile)
 
-        return torch.from_numpy(tile.copy()), torch.tensor(label, dtype=torch.float32)
+        return (torch.from_numpy(tile.copy()),
+                torch.tensor(label, dtype=torch.float32),
+                torch.tensor(weight, dtype=torch.float32))
 
 
 # ---------------------------------------------------------------------------
@@ -102,8 +109,16 @@ def resize_tile(tile, target_size):
 # Normalization
 # ---------------------------------------------------------------------------
 
-def compute_norm_stats(manifest_path, split="train", low_pct=2, high_pct=98):
+def compute_norm_stats(manifest_path, split="train", low_pct=2, high_pct=98,
+                       channel_names=None):
     """Compute per-channel percentile statistics from training tiles.
+
+    Each channel (R, G, B, NDVI, NDBI, SWIR_ratio) is normalized INDEPENDENTLY.
+    This is critical because they have very different physical scales:
+    - RGB: ~0-10000 (reflectance)
+    - NDVI: -1 to 1 (vegetation index)
+    - NDBI: -1 to 1 (built-up index)
+    - SWIR_ratio: 0 to ~2 (ratio)
 
     Parameters
     ----------
@@ -113,12 +128,17 @@ def compute_norm_stats(manifest_path, split="train", low_pct=2, high_pct=98):
         Split to compute stats from (usually 'train').
     low_pct, high_pct : float
         Percentiles for clipping.
+    channel_names : list of str, optional
+        Names for reporting.
 
     Returns
     -------
     dict
         'low': array of shape (n_channels,), 'high': array of shape (n_channels,).
     """
+    if channel_names is None:
+        channel_names = ["R", "G", "B", "NDVI", "NDBI", "SWIR_ratio"]
+
     manifest = pd.read_csv(manifest_path)
     manifest = manifest[manifest["split"] == split]
 
@@ -131,6 +151,21 @@ def compute_norm_stats(manifest_path, split="train", low_pct=2, high_pct=98):
 
     low = np.percentile(all_values, low_pct, axis=1)
     high = np.percentile(all_values, high_pct, axis=1)
+
+    # Validation: print per-channel ranges for review
+    print(f"Normalization stats ({split}, p{low_pct}-p{high_pct}):")
+    for i, name in enumerate(channel_names[:len(low)]):
+        actual_min = all_values[i].min()
+        actual_max = all_values[i].max()
+        print(f"  {name:>12s}: clip [{low[i]:>10.2f}, {high[i]:>10.2f}]  "
+              f"actual [{actual_min:>10.2f}, {actual_max:>10.2f}]")
+
+    # Sanity check: warn if any channel has zero range
+    zero_range = np.where(high - low == 0)[0]
+    if len(zero_range) > 0:
+        names = [channel_names[i] if i < len(channel_names) else f"ch{i}"
+                 for i in zero_range]
+        print(f"  WARNING: Zero range for channels: {names}")
 
     return {"low": low, "high": high}
 
@@ -299,3 +334,80 @@ def create_manifest(tiles_dir, labels_df, output_path, train_countries,
               f"({subset['label'].value_counts().to_dict()})")
 
     return manifest
+
+
+# ---------------------------------------------------------------------------
+# Split verification (anti-leakage check)
+# ---------------------------------------------------------------------------
+
+def verify_split_integrity(manifest_path):
+    """Verify no data leakage between train/val/test splits.
+
+    Checks:
+    1. No scene_id appears in both train and val
+    2. No parent_camp appears in both train/val and test
+    3. Train and test countries don't overlap
+
+    Parameters
+    ----------
+    manifest_path : str or Path
+        Path to manifest CSV.
+
+    Returns
+    -------
+    bool
+        True if all checks pass.
+    """
+    manifest = pd.read_csv(manifest_path)
+    passed = True
+
+    # Check 1: Scene-level leakage between train and val
+    if "scene_id" in manifest.columns:
+        train_scenes = set(manifest[manifest["split"] == "train"]["scene_id"].unique())
+        val_scenes = set(manifest[manifest["split"] == "val"]["scene_id"].unique())
+        overlap = train_scenes & val_scenes - {"unknown"}
+        if overlap:
+            print(f"FAIL: {len(overlap)} scene(s) in both train and val: {overlap}")
+            passed = False
+        else:
+            print(f"OK: No scene overlap between train ({len(train_scenes)}) "
+                  f"and val ({len(val_scenes)})")
+
+    # Check 2: Country-level separation between train/val and test
+    trainval_countries = set(
+        manifest[manifest["split"].isin(["train", "val"])]["country"].unique()
+    )
+    test_countries = set(manifest[manifest["split"] == "test"]["country"].unique())
+    country_overlap = trainval_countries & test_countries
+    if country_overlap:
+        print(f"FAIL: Countries in both train/val and test: {country_overlap}")
+        passed = False
+    else:
+        print(f"OK: No country overlap (train/val={trainval_countries}, "
+              f"test={test_countries})")
+
+    # Check 3: Parent camp not shared between splits
+    if "parent_camp" in manifest.columns:
+        for s1, s2 in [("train", "val"), ("train", "test"), ("val", "test")]:
+            camps1 = set(manifest[manifest["split"] == s1]["parent_camp"].dropna().unique())
+            camps2 = set(manifest[manifest["split"] == s2]["parent_camp"].dropna().unique())
+            camp_overlap = camps1 & camps2 - {""}
+            if camp_overlap:
+                print(f"WARN: {len(camp_overlap)} parent camp(s) in both {s1} and {s2}")
+            else:
+                print(f"OK: No parent_camp overlap between {s1} and {s2}")
+
+    # Summary stats
+    print(f"\nDataset summary:")
+    for split in ["train", "val", "test"]:
+        subset = manifest[manifest["split"] == split]
+        n_pos = subset["label"].isin(["camp", "camp_context"]).sum()
+        n_neg = (~subset["label"].isin(["camp", "camp_context"])).sum()
+        print(f"  {split}: {len(subset)} tiles ({n_pos} pos, {n_neg} neg)")
+
+    if passed:
+        print("\nAll integrity checks PASSED")
+    else:
+        print("\nSome checks FAILED — fix before training!")
+
+    return passed

@@ -78,13 +78,19 @@ def train_model(model, train_dataset, val_dataset, config, device="cpu",
         train_losses = []
         t0 = time.time()
 
-        for images, labels in train_loader:
+        for batch in train_loader:
+            images, labels, weights = batch[0], batch[1], batch[2]
             images = images.to(device)
             labels = labels.to(device)
+            weights = weights.to(device)
 
             optimizer.zero_grad()
             outputs = model(images).squeeze(1)
-            loss = criterion(outputs, labels)
+            # Per-sample weighted loss (camp_context tiles get reduced weight)
+            per_sample_loss = nn.functional.binary_cross_entropy_with_logits(
+                outputs, labels, reduction="none",
+            ) * weights
+            loss = per_sample_loss.mean()
             loss.backward()
             optimizer.step()
             train_losses.append(loss.item())
@@ -156,7 +162,8 @@ def evaluate(model, data_loader, criterion, device):
     losses = []
 
     with torch.no_grad():
-        for images, labels in data_loader:
+        for batch in data_loader:
+            images, labels = batch[0], batch[1]
             images = images.to(device)
             labels = labels.to(device)
 
@@ -210,8 +217,8 @@ def predict(model, data_loader, device="cpu"):
     all_probs = []
 
     with torch.no_grad():
-        for images, _ in data_loader:
-            images = images.to(device)
+        for batch in data_loader:
+            images = batch[0].to(device)
             outputs = model(images).squeeze(1)
             probs = torch.sigmoid(outputs).cpu().numpy()
             all_probs.extend(probs)

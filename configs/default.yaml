@@ -28,7 +28,13 @@ resolution: 10             # meters per pixel
 # Multi-tile grid per camp location
 grid:
   size: 3                  # 3x3 grid around each camp center
-  overlap_threshold: 0.3   # label positive if >30% overlaps camp polygon
+  # Label strategy: since we have POINTS not polygons, we use a buffer
+  # Center tile (0,0) = "camp" (high confidence)
+  # Adjacent tiles (|row|+|col|=1) = "camp" (within buffer, likely partial)
+  # Corner tiles (|row|+|col|=2) = "camp_context" (used for training context, lower weight)
+  # This is a KNOWN LIMITATION - documented in paper
+  label_strategy: point_buffer  # "point_buffer" or "polygon" (if polygons available)
+  buffer_m: 500                 # buffer around camp point for labeling
 
 # Sentinel-2 search parameters
 cloud_threshold: 20        # max cloud cover percentage
@@ -52,6 +58,7 @@ negative_categories:        # explicit negative types
   - rural                  # dispersed rural areas
   - urban                  # formal dense cities
   - barren                 # desert / bare soil / savanna
+  - informal               # informal settlements that are NOT refugee camps (hard negatives)
 
 # Model
 model:
@@ -61,10 +68,11 @@ model:
   num_classes: 1           # binary (sigmoid output)
   freeze_epochs: 5         # freeze backbone for N epochs
   lr: 0.0001
-  batch_size: 32
+  batch_size: 32           # use 16 if training at 128px
   max_epochs: 50
   patience: 5              # early stopping patience
   pos_weight: 3.0          # BCEWithLogitsLoss weight for positives
+  context_weight: 0.5      # reduced loss weight for camp_context tiles (corners)
 
 # Augmentation
 augmentation:

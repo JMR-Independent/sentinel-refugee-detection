@@ -40,6 +40,16 @@ URBAN_CENTERS = {
     "yemen": [(15.35, 44.21), (12.78, 45.04)],          # Sana'a, Aden
 }
 
+# Known informal settlement areas (NOT refugee camps) — hard negatives
+# These are dense, unplanned neighborhoods that might look like camps
+INFORMAL_AREAS = {
+    "syria": [(33.48, 36.32), (36.18, 37.12)],          # Damascus/Aleppo outskirts
+    "south_sudan": [(4.83, 31.59), (4.87, 31.63)],      # Juba informal areas
+    "chad": [(12.08, 15.06)],                            # N'Djamena periphery
+    "ethiopia": [(8.98, 38.72), (9.05, 38.80)],         # Addis Ababa outskirts
+    "yemen": [(15.33, 44.19), (12.80, 45.06)],          # Sana'a/Aden edges
+}
+
 
 def query_osm_camps(country, bounds=None):
     """Query OpenStreetMap for refugee camp locations via Overpass API.
@@ -268,10 +278,19 @@ def generate_grid_tiles(center_lat, center_lon, grid_size=3,
 
 
 def expand_camps_to_grid(camps_df, config):
-    """Expand each camp location into a grid of tiles.
+    """Expand each camp location into a grid of tiles with distance-based labels.
 
-    Center tile (0,0) is always labeled 'camp'.
-    Other tiles are labeled 'camp_peripheral' (to be refined with polygons).
+    Since we typically have POINTS (not polygons), labels are assigned by
+    Manhattan distance from the center tile:
+    - Center (0,0): "camp" — high confidence, point is here
+    - Adjacent (dist=1): "camp" — within ~1 tile of point, likely partial coverage
+    - Corner (dist=2): "camp_context" — farther, may or may not contain camp
+      These get reduced loss weight during training.
+
+    If polygon data is available, use polygon intersection instead.
+
+    LIMITATION: This is documented in the paper. Without polygons, peripheral
+    tile labels are approximate.
 
     Parameters
     ----------
@@ -298,25 +317,38 @@ def expand_camps_to_grid(camps_df, config):
             resolution=resolution,
         )
         for tile in grid_tiles:
-            is_center = (tile["grid_row"] == 0 and tile["grid_col"] == 0)
+            manhattan_dist = abs(tile["grid_row"]) + abs(tile["grid_col"])
+            is_center = (manhattan_dist == 0)
+
+            # Label based on distance from camp center point
+            if manhattan_dist <= 1:
+                label = "camp"            # center + direct neighbors
+            else:
+                label = "camp_context"    # corners — reduced weight in training
+
             rows.append({
                 "lat": tile["lat"],
                 "lon": tile["lon"],
                 "name": camp.get("name", "unnamed"),
                 "country": camp["country"],
                 "source": camp.get("source", "unknown"),
-                "label": "camp",
+                "label": label,
                 "tile_id": (f"{camp['tile_id']}_r{tile['grid_row']:+d}"
                             f"c{tile['grid_col']:+d}"),
                 "parent_camp": camp["tile_id"],
                 "is_center": is_center,
                 "grid_row": tile["grid_row"],
                 "grid_col": tile["grid_col"],
+                "manhattan_dist": manhattan_dist,
             })
 
     result = pd.DataFrame(rows)
+    n_camp = (result["label"] == "camp").sum()
+    n_context = (result["label"] == "camp_context").sum()
     print(f"Expanded {len(camps_df)} camps -> {len(result)} grid tiles "
           f"({grid_size}x{grid_size} grid)")
+    print(f"  Labels: {n_camp} camp (center+adjacent), "
+          f"{n_context} camp_context (corners)")
     return result
 
 
@@ -360,7 +392,12 @@ def generate_negatives(camps_df, config, seed=42):
         for cat in categories:
             n_needed = len(country_camps) * n_per_camp
 
-            if cat == "urban" and country in URBAN_CENTERS:
+            if cat == "informal" and country in INFORMAL_AREAS:
+                # Hard negatives: informal settlements that are NOT camps
+                negs = _sample_near_locations(
+                    INFORMAL_AREAS[country], n_needed, camp_coords, min_dist, rng,
+                    radius_deg=0.05)  # ~5km radius
+            elif cat == "urban" and country in URBAN_CENTERS:
                 # Sample near known cities
                 negs = _sample_near_cities(
                     country, n_needed, camp_coords, min_dist, rng)
@@ -415,6 +452,24 @@ def _sample_near_cities(country, n_needed, camp_coords, min_dist, rng):
         # Random offset within ~20km of city center
         lat = city[0] + rng.uniform(-0.18, 0.18)
         lon = city[1] + rng.uniform(-0.18, 0.18)
+        if _min_dist_to_camps(lat, lon, camp_coords) >= min_dist:
+            points.append((lat, lon))
+        attempts += 1
+    return points
+
+
+def _sample_near_locations(locations, n_needed, camp_coords, min_dist, rng,
+                           radius_deg=0.05):
+    """Sample points near specific locations (for hard negatives)."""
+    if not locations:
+        return []
+
+    points = []
+    attempts = 0
+    while len(points) < n_needed and attempts < n_needed * 50:
+        loc = locations[rng.integers(len(locations))]
+        lat = loc[0] + rng.uniform(-radius_deg, radius_deg)
+        lon = loc[1] + rng.uniform(-radius_deg, radius_deg)
         if _min_dist_to_camps(lat, lon, camp_coords) >= min_dist:
             points.append((lat, lon))
         attempts += 1
