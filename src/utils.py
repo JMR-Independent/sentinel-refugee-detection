@@ -284,13 +284,14 @@ def expand_camps_to_grid(camps_df, config):
     Manhattan distance from the center tile:
     - Center (0,0): "camp" — high confidence, point is here
     - Adjacent (dist=1): "camp" — within ~1 tile of point, likely partial coverage
-    - Corner (dist=2): "camp_context" — farther, may or may not contain camp
-      These get reduced loss weight during training.
+    - Corner (dist=2): EXCLUDED by default (include_corners=false)
+      If included, labeled "camp_context" with reduced loss weight.
 
-    If polygon data is available, use polygon intersection instead.
-
-    LIMITATION: This is documented in the paper. Without polygons, peripheral
-    tile labels are approximate.
+    Why exclude corners by default:
+    - Tile covers 1.28km, buffer is 500m
+    - Corner center is ~1.81km from camp point
+    - At that distance, <10% of typical camp falls in corner
+    - Less noise > more data
 
     Parameters
     ----------
@@ -307,6 +308,7 @@ def expand_camps_to_grid(camps_df, config):
     grid_size = config["grid"]["size"]
     tile_size = config["tile_size_download"]
     resolution = config["resolution"]
+    include_corners = config["grid"].get("include_corners", False)
 
     rows = []
     for _, camp in camps_df.iterrows():
@@ -319,6 +321,10 @@ def expand_camps_to_grid(camps_df, config):
         for tile in grid_tiles:
             manhattan_dist = abs(tile["grid_row"]) + abs(tile["grid_col"])
             is_center = (manhattan_dist == 0)
+
+            # Skip corners if configured
+            if manhattan_dist >= 2 and not include_corners:
+                continue
 
             # Label based on distance from camp center point
             if manhattan_dist <= 1:
@@ -345,10 +351,11 @@ def expand_camps_to_grid(camps_df, config):
     result = pd.DataFrame(rows)
     n_camp = (result["label"] == "camp").sum()
     n_context = (result["label"] == "camp_context").sum()
+    tiles_per = len(result) // max(len(camps_df), 1)
     print(f"Expanded {len(camps_df)} camps -> {len(result)} grid tiles "
-          f"({grid_size}x{grid_size} grid)")
-    print(f"  Labels: {n_camp} camp (center+adjacent), "
-          f"{n_context} camp_context (corners)")
+          f"({tiles_per} per camp, corners={'included' if include_corners else 'excluded'})")
+    print(f"  Labels: {n_camp} camp (center+adjacent)"
+          + (f", {n_context} camp_context (corners)" if n_context > 0 else ""))
     return result
 
 
@@ -721,3 +728,69 @@ def df_to_geojson(df, output_path):
         json.dump(geojson, f, indent=2)
 
     print(f"Saved {len(features)} features to {output_path}")
+
+
+def print_dataset_summary(camp_tiles_df, negatives_df, config):
+    """Print exact dataset counts. No estimation — hard numbers only.
+
+    Parameters
+    ----------
+    camp_tiles_df : pd.DataFrame
+        Camp tiles (output of expand_camps_to_grid).
+    negatives_df : pd.DataFrame
+        Negative samples (output of generate_negatives).
+    config : dict
+        Configuration.
+    """
+    n_cats = len(config["negative_categories"])
+    n_ratio = config["negative_ratio"]
+
+    print("=" * 60)
+    print("DATASET SUMMARY (exact counts)")
+    print("=" * 60)
+
+    # Positives
+    n_unique_camps = camp_tiles_df["parent_camp"].nunique() if "parent_camp" in camp_tiles_df else len(camp_tiles_df)
+    n_camp = (camp_tiles_df["label"] == "camp").sum()
+    n_context = (camp_tiles_df["label"] == "camp_context").sum()
+    print(f"\nPositives:")
+    print(f"  Unique camps:        {n_unique_camps}")
+    print(f"  Camp tiles:          {n_camp} (center + adjacent)")
+    if n_context > 0:
+        print(f"  Context tiles:       {n_context} (corners, weight 0.5)")
+    print(f"  Total positive tiles: {len(camp_tiles_df)}")
+
+    # Per country
+    print(f"\n  By country:")
+    for country in sorted(camp_tiles_df["country"].unique()):
+        n = (camp_tiles_df["country"] == country).sum()
+        print(f"    {country}: {n} tiles")
+
+    # Negatives
+    print(f"\nNegatives:")
+    print(f"  Total: {len(negatives_df)}")
+    if "neg_category" in negatives_df:
+        for cat in config["negative_categories"]:
+            n = (negatives_df["neg_category"] == cat).sum()
+            print(f"    {cat}: {n}")
+
+    print(f"\n  By country:")
+    for country in sorted(negatives_df["country"].unique()):
+        n = (negatives_df["country"] == country).sum()
+        print(f"    {country}: {n}")
+
+    # Ratio
+    total_pos = len(camp_tiles_df)
+    total_neg = len(negatives_df)
+    ratio = total_neg / max(total_pos, 1)
+    print(f"\nBalance:")
+    print(f"  Positive:Negative = 1:{ratio:.1f}")
+    print(f"  Total tiles: {total_pos + total_neg}")
+
+    # Expected formula check
+    expected_neg = n_unique_camps * n_ratio * n_cats
+    print(f"\n  Expected negatives (formula): {n_unique_camps} camps * "
+          f"{n_ratio}/cat * {n_cats} cats = {expected_neg}")
+    if abs(total_neg - expected_neg) > expected_neg * 0.1:
+        print(f"  WARNING: actual ({total_neg}) differs from expected ({expected_neg})")
+    print("=" * 60)

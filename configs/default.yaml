@@ -29,12 +29,22 @@ resolution: 10             # meters per pixel
 grid:
   size: 3                  # 3x3 grid around each camp center
   # Label strategy: since we have POINTS not polygons, we use a buffer
-  # Center tile (0,0) = "camp" (high confidence)
-  # Adjacent tiles (|row|+|col|=1) = "camp" (within buffer, likely partial)
-  # Corner tiles (|row|+|col|=2) = "camp_context" (used for training context, lower weight)
-  # This is a KNOWN LIMITATION - documented in paper
-  label_strategy: point_buffer  # "point_buffer" or "polygon" (if polygons available)
+  # Center tile (0,0) = "camp" (high confidence, point is here)
+  # Adjacent tiles (dist=1) = "camp" (within 1.28km, likely partial coverage)
+  # Corner tiles (dist=2) = EXCLUDED by default (too far, likely noise)
+  #
+  # Why exclude corners:
+  # - Tile covers 1.28km, camp point buffer is 500m
+  # - Corner centers are ~1.81km from camp point (sqrt(2) * 1.28)
+  # - At that distance, <10% of a typical camp falls in the corner tile
+  # - Including them adds noise > signal
+  #
+  # If polygons become available, switch to polygon intersection
+  label_strategy: point_buffer  # "point_buffer" or "polygon"
   buffer_m: 500                 # buffer around camp point for labeling
+  include_corners: false        # if false, corners are excluded from training
+  # With include_corners=false: 5 tiles per camp (center + 4 adjacent)
+  # With include_corners=true:  9 tiles per camp (full 3x3, corners weight 0.5)
 
 # Sentinel-2 search parameters
 cloud_threshold: 20        # max cloud cover percentage
@@ -51,14 +61,30 @@ test_countries:
   - ethiopia
   - yemen
 
+# -------------------------------------------------------------------
+# Class definitions (for paper clarity)
+# -------------------------------------------------------------------
+# camp: Location recognized by UNHCR as refugee/IDP camp OR tagged
+#        in OpenStreetMap as place=camp / refugee=yes / camp:type=refugee.
+#        These are KNOWN displacement sites with official or community
+#        documentation.
+#
+# informal: High-density self-built urban areas NOT labeled as refugee
+#           camps. Used as hard negatives to prevent the model from
+#           learning "dense = camp". Includes peri-urban slums and
+#           unplanned neighborhoods.
+# -------------------------------------------------------------------
+
 # Negative sample generation
 negative_buffer_km: 10     # min distance from any camp
-negative_ratio: 3          # negatives per positive (per category)
+negative_ratio: 3          # negatives PER CAMP (not per tile) per category
 negative_categories:        # explicit negative types
   - rural                  # dispersed rural areas
   - urban                  # formal dense cities
   - barren                 # desert / bare soil / savanna
-  - informal               # informal settlements that are NOT refugee camps (hard negatives)
+  - informal               # informal settlements NOT refugee camps (hard negatives)
+# Total negatives = n_camps * negative_ratio * len(negative_categories)
+# Example: 50 camps * 3 * 4 = 600 negatives
 
 # Model
 model:
@@ -72,7 +98,7 @@ model:
   max_epochs: 50
   patience: 5              # early stopping patience
   pos_weight: 3.0          # BCEWithLogitsLoss weight for positives
-  context_weight: 0.5      # reduced loss weight for camp_context tiles (corners)
+  context_weight: 0.5      # reduced loss weight for camp_context tiles (if corners included)
 
 # Augmentation
 augmentation:
@@ -96,3 +122,8 @@ inference:
 split:
   by_scene: true             # never mix tiles from same Sentinel-2 scene
   val_fraction: 0.2
+
+# Mini-test mode: download only N camps first for visual validation
+mini_test:
+  enabled: true              # set false for full pipeline
+  n_camps: 10               # number of camps to download first
