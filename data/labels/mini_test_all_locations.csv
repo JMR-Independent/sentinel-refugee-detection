@@ -1,0 +1,171 @@
+lat,lon,name,country,source,label,tile_id,parent_camp,is_center,grid_row,grid_col,manhattan_dist,neg_category
+36.36250161696012,38.86,Ain Issa,syria,unhcr_known,camp,camp_syria_000_r-1c+0,camp_syria_000,False,-1.0,0.0,1.0,
+36.374,38.84571918599324,Ain Issa,syria,unhcr_known,camp,camp_syria_000_r+0c-1,camp_syria_000,False,0.0,-1.0,1.0,
+36.374,38.86,Ain Issa,syria,unhcr_known,camp,camp_syria_000_r+0c+0,camp_syria_000,True,0.0,0.0,0.0,
+36.374,38.87428081400676,Ain Issa,syria,unhcr_known,camp,camp_syria_000_r+0c+1,camp_syria_000,False,0.0,1.0,1.0,
+36.38549838303989,38.86,Ain Issa,syria,unhcr_known,camp,camp_syria_000_r+1c+0,camp_syria_000,False,1.0,0.0,1.0,
+11.563501616960114,41.431,Aysaita,ethiopia,unhcr_hdx,camp,camp_ethiopia_001_r-1c+0,camp_ethiopia_001,False,-1.0,0.0,1.0,
+11.575,41.419262918683174,Aysaita,ethiopia,unhcr_hdx,camp,camp_ethiopia_001_r+0c-1,camp_ethiopia_001,False,0.0,-1.0,1.0,
+11.575,41.431,Aysaita,ethiopia,unhcr_hdx,camp,camp_ethiopia_001_r+0c+0,camp_ethiopia_001,True,0.0,0.0,0.0,
+11.575,41.44273708131682,Aysaita,ethiopia,unhcr_hdx,camp,camp_ethiopia_001_r+0c+1,camp_ethiopia_001,False,0.0,1.0,1.0,
+11.586498383039885,41.431,Aysaita,ethiopia,unhcr_hdx,camp,camp_ethiopia_001_r+1c+0,camp_ethiopia_001,False,1.0,0.0,1.0,
+36.22150161696011,36.583,Deir Ballut,syria,unhcr_known,camp,camp_syria_002_r-1c+0,camp_syria_002,False,-1.0,0.0,1.0,
+36.233,36.56874498172356,Deir Ballut,syria,unhcr_known,camp,camp_syria_002_r+0c-1,camp_syria_002,False,0.0,-1.0,1.0,
+36.233,36.583,Deir Ballut,syria,unhcr_known,camp,camp_syria_002_r+0c+0,camp_syria_002,True,0.0,0.0,0.0,
+36.233,36.597255018276435,Deir Ballut,syria,unhcr_known,camp,camp_syria_002_r+0c+1,camp_syria_002,False,0.0,1.0,1.0,
+36.24449838303988,36.583,Deir Ballut,syria,unhcr_known,camp,camp_syria_002_r+1c+0,camp_syria_002,False,1.0,0.0,1.0,
+13.071501616960115,21.283,Bredjing,chad,unhcr_known,camp,camp_chad_003_r-1c+0,camp_chad_003,False,-1.0,0.0,1.0,
+13.083,21.271195201859406,Bredjing,chad,unhcr_known,camp,camp_chad_003_r+0c-1,camp_chad_003,False,0.0,-1.0,1.0,
+13.083,21.283,Bredjing,chad,unhcr_known,camp,camp_chad_003_r+0c+0,camp_chad_003,True,0.0,0.0,0.0,
+13.083,21.294804798140596,Bredjing,chad,unhcr_known,camp,camp_chad_003_r+0c+1,camp_chad_003,False,0.0,1.0,1.0,
+13.094498383039886,21.283,Bredjing,chad,unhcr_known,camp,camp_chad_003_r+1c+0,camp_chad_003,False,1.0,0.0,1.0,
+2.0385016169601147,32.167,Kiryandongo,uganda,unhcr_known,camp,camp_uganda_004_r-1c+0,camp_uganda_004,False,-1.0,0.0,1.0,
+2.05,32.15549425317776,Kiryandongo,uganda,unhcr_known,camp,camp_uganda_004_r+0c-1,camp_uganda_004,False,0.0,-1.0,1.0,
+2.05,32.167,Kiryandongo,uganda,unhcr_known,camp,camp_uganda_004_r+0c+0,camp_uganda_004,True,0.0,0.0,0.0,
+2.05,32.178505746822246,Kiryandongo,uganda,unhcr_known,camp,camp_uganda_004_r+0c+1,camp_uganda_004,False,0.0,1.0,1.0,
+2.061498383039885,32.167,Kiryandongo,uganda,unhcr_known,camp,camp_uganda_004_r+1c+0,camp_uganda_004,False,1.0,0.0,1.0,
+8.271501616960114,16.617,Belom,chad,unhcr_known,camp,camp_chad_005_r-1c+0,camp_chad_005,False,-1.0,0.0,1.0,
+8.283,16.605380408080077,Belom,chad,unhcr_known,camp,camp_chad_005_r+0c-1,camp_chad_005,False,0.0,-1.0,1.0,
+8.283,16.617,Belom,chad,unhcr_known,camp,camp_chad_005_r+0c+0,camp_chad_005,True,0.0,0.0,0.0,
+8.283,16.628619591919925,Belom,chad,unhcr_known,camp,camp_chad_005_r+0c+1,camp_chad_005,False,0.0,1.0,1.0,
+8.294498383039885,16.617,Belom,chad,unhcr_known,camp,camp_chad_005_r+1c+0,camp_chad_005,False,1.0,0.0,1.0,
+36.649501616960116,37.363,Kilis-Elbeyli,syria,unhcr_hdx,camp,camp_syria_006_r-1c+0,camp_syria_006,False,-1.0,0.0,1.0,
+36.661,37.34866612131577,Kilis-Elbeyli,syria,unhcr_hdx,camp,camp_syria_006_r+0c-1,camp_syria_006,False,0.0,-1.0,1.0,
+36.661,37.363,Kilis-Elbeyli,syria,unhcr_hdx,camp,camp_syria_006_r+0c+0,camp_syria_006,True,0.0,0.0,0.0,
+36.661,37.377333878684226,Kilis-Elbeyli,syria,unhcr_hdx,camp,camp_syria_006_r+0c+1,camp_syria_006,False,0.0,1.0,1.0,
+36.67249838303989,37.363,Kilis-Elbeyli,syria,unhcr_hdx,camp,camp_syria_006_r+1c+0,camp_syria_006,False,1.0,0.0,1.0,
+13.788501616960115,14.5,Dar es Salam,chad,unhcr_known,camp,camp_chad_007_r-1c+0,camp_chad_007,False,-1.0,0.0,1.0,
+13.8,14.48815984228159,Dar es Salam,chad,unhcr_known,camp,camp_chad_007_r+0c-1,camp_chad_007,False,0.0,-1.0,1.0,
+13.8,14.5,Dar es Salam,chad,unhcr_known,camp,camp_chad_007_r+0c+0,camp_chad_007,True,0.0,0.0,0.0,
+13.8,14.51184015771841,Dar es Salam,chad,unhcr_known,camp,camp_chad_007_r+0c+1,camp_chad_007,False,0.0,1.0,1.0,
+13.811498383039886,14.5,Dar es Salam,chad,unhcr_known,camp,camp_chad_007_r+1c+0,camp_chad_007,False,1.0,0.0,1.0,
+15.421501616960114,50.15,Mayfa IDP camp,yemen,unhcr_known,camp,camp_yemen_008_r-1c+0,camp_yemen_008,False,-1.0,0.0,1.0,
+15.433,50.138071502724124,Mayfa IDP camp,yemen,unhcr_known,camp,camp_yemen_008_r+0c-1,camp_yemen_008,False,0.0,-1.0,1.0,
+15.433,50.15,Mayfa IDP camp,yemen,unhcr_known,camp,camp_yemen_008_r+0c+0,camp_yemen_008,True,0.0,0.0,0.0,
+15.433,50.16192849727587,Mayfa IDP camp,yemen,unhcr_known,camp,camp_yemen_008_r+0c+1,camp_yemen_008,False,0.0,1.0,1.0,
+15.444498383039885,50.15,Mayfa IDP camp,yemen,unhcr_known,camp,camp_yemen_008_r+1c+0,camp_yemen_008,False,1.0,0.0,1.0,
+4.8215016169601155,31.617,Juba POC (UN House),south_sudan,unhcr_known,camp,camp_south_sudan_009_r-1c+0,camp_south_sudan_009,False,-1.0,0.0,1.0,
+4.833,31.605460588571145,Juba POC (UN House),south_sudan,unhcr_known,camp,camp_south_sudan_009_r+0c-1,camp_south_sudan_009,False,0.0,-1.0,1.0,
+4.833,31.617,Juba POC (UN House),south_sudan,unhcr_known,camp,camp_south_sudan_009_r+0c+0,camp_south_sudan_009,True,0.0,0.0,0.0,
+4.833,31.628539411428857,Juba POC (UN House),south_sudan,unhcr_known,camp,camp_south_sudan_009_r+0c+1,camp_south_sudan_009,False,0.0,1.0,1.0,
+4.844498383039885,31.617,Juba POC (UN House),south_sudan,unhcr_known,camp,camp_south_sudan_009_r+1c+0,camp_south_sudan_009,False,1.0,0.0,1.0,
+36.187519803265374,38.64293040874867,neg_rural_syria_0000,syria,negative,non-camp,neg_rural_0000,,,,,,rural
+36.611575578756025,40.36447107353536,neg_rural_syria_0001,syria,negative,non-camp,neg_rural_0001,,,,,,rural
+32.78182851291712,42.217644861900794,neg_rural_syria_0002,syria,negative,non-camp,neg_rural_0002,,,,,,rural
+36.12330990697167,40.955188273144515,neg_rural_syria_0003,syria,negative,non-camp,neg_rural_0003,,,,,,rural
+32.951849299704485,38.71957034638448,neg_rural_syria_0004,syria,negative,non-camp,neg_rural_0004,,,,,,rural
+34.167698101405236,41.89225482573169,neg_rural_syria_0005,syria,negative,non-camp,neg_rural_0005,,,,,,rural
+35.53576425160413,41.19959234438373,neg_rural_syria_0006,syria,negative,non-camp,neg_rural_0006,,,,,,rural
+34.53150513612493,37.233409887086616,neg_rural_syria_0007,syria,negative,non-camp,neg_rural_0007,,,,,,rural
+35.08846978294933,36.145022925653805,neg_rural_syria_0008,syria,negative,non-camp,neg_rural_0008,,,,,,rural
+36.247399183683946,37.242911586430736,neg_urban_syria_0000,syria,negative,non-camp,neg_urban_0009,,,,,,urban
+36.147629348526756,37.31945128878216,neg_urban_syria_0001,syria,negative,non-camp,neg_urban_0010,,,,,,urban
+33.61021805894655,36.180069934826705,neg_urban_syria_0002,syria,negative,non-camp,neg_urban_0011,,,,,,urban
+36.18801956134173,36.9857693556834,neg_urban_syria_0003,syria,negative,non-camp,neg_urban_0012,,,,,,urban
+36.265897623167284,37.238114376126816,neg_urban_syria_0004,syria,negative,non-camp,neg_urban_0013,,,,,,urban
+33.67830350367631,36.227297128929735,neg_urban_syria_0005,syria,negative,non-camp,neg_urban_0014,,,,,,urban
+36.189040092059294,37.03820968927034,neg_urban_syria_0006,syria,negative,non-camp,neg_urban_0015,,,,,,urban
+33.37677174192077,36.281253773441335,neg_urban_syria_0007,syria,negative,non-camp,neg_urban_0016,,,,,,urban
+33.571133038085705,36.267374690794036,neg_urban_syria_0008,syria,negative,non-camp,neg_urban_0017,,,,,,urban
+33.36249844830938,37.80036183160439,neg_barren_syria_0000,syria,negative,non-camp,neg_barren_0018,,,,,,barren
+33.5195608293177,38.30060600434096,neg_barren_syria_0001,syria,negative,non-camp,neg_barren_0019,,,,,,barren
+36.842790742474385,36.650751540838,neg_barren_syria_0002,syria,negative,non-camp,neg_barren_0020,,,,,,barren
+35.82806549143576,40.96091635416424,neg_barren_syria_0003,syria,negative,non-camp,neg_barren_0021,,,,,,barren
+33.36986356407538,40.919655346606305,neg_barren_syria_0004,syria,negative,non-camp,neg_barren_0022,,,,,,barren
+36.6718180175172,36.6510480075302,neg_barren_syria_0005,syria,negative,non-camp,neg_barren_0023,,,,,,barren
+36.82160965157108,38.857500732913266,neg_barren_syria_0006,syria,negative,non-camp,neg_barren_0024,,,,,,barren
+33.45979328269629,39.947224011203936,neg_barren_syria_0007,syria,negative,non-camp,neg_barren_0025,,,,,,barren
+33.150488362600356,37.744307653096996,neg_barren_syria_0008,syria,negative,non-camp,neg_barren_0026,,,,,,barren
+33.43308178345679,36.31367173892323,neg_informal_syria_0000,syria,negative,non-camp,neg_informal_0027,,,,,,informal
+36.17085286437246,37.15534030732682,neg_informal_syria_0001,syria,negative,non-camp,neg_informal_0028,,,,,,informal
+33.45339394858653,36.275830274168904,neg_informal_syria_0002,syria,negative,non-camp,neg_informal_0029,,,,,,informal
+36.15935937577667,37.136191651472686,neg_informal_syria_0003,syria,negative,non-camp,neg_informal_0030,,,,,,informal
+33.485703215234125,36.34838982091064,neg_informal_syria_0004,syria,negative,non-camp,neg_informal_0031,,,,,,informal
+36.17063868614401,37.1514020384666,neg_informal_syria_0005,syria,negative,non-camp,neg_informal_0032,,,,,,informal
+36.14669729199077,37.072271207313385,neg_informal_syria_0006,syria,negative,non-camp,neg_informal_0033,,,,,,informal
+33.502235935059645,36.31618772302514,neg_informal_syria_0007,syria,negative,non-camp,neg_informal_0034,,,,,,informal
+33.44612717790336,36.320104477510334,neg_informal_syria_0008,syria,negative,non-camp,neg_informal_0035,,,,,,informal
+5.150066060174305,43.43480562616604,neg_rural_ethiopia_0000,ethiopia,negative,non-camp,neg_rural_0036,,,,,,rural
+8.526335606345613,38.705318391447236,neg_rural_ethiopia_0001,ethiopia,negative,non-camp,neg_rural_0037,,,,,,rural
+6.864373904309101,42.44423889678333,neg_rural_ethiopia_0002,ethiopia,negative,non-camp,neg_rural_0038,,,,,,rural
+7.531553970953796,36.69248212476339,neg_urban_ethiopia_0000,ethiopia,negative,non-camp,neg_urban_0039,,,,,,urban
+9.186283159237824,38.89708904865474,neg_urban_ethiopia_0001,ethiopia,negative,non-camp,neg_urban_0040,,,,,,urban
+8.935713186125426,38.91890349584518,neg_urban_ethiopia_0002,ethiopia,negative,non-camp,neg_urban_0041,,,,,,urban
+5.871120482031058,39.73042253215683,neg_barren_ethiopia_0000,ethiopia,negative,non-camp,neg_barren_0042,,,,,,barren
+11.775259646543113,46.52903594815763,neg_barren_ethiopia_0001,ethiopia,negative,non-camp,neg_barren_0043,,,,,,barren
+12.14054651844916,37.57934936225979,neg_barren_ethiopia_0002,ethiopia,negative,non-camp,neg_barren_0044,,,,,,barren
+9.05792195689419,38.767677278293924,neg_informal_ethiopia_0000,ethiopia,negative,non-camp,neg_informal_0045,,,,,,informal
+9.005851952983521,38.74194629559509,neg_informal_ethiopia_0001,ethiopia,negative,non-camp,neg_informal_0046,,,,,,informal
+9.04320930397751,38.81273088407024,neg_informal_ethiopia_0002,ethiopia,negative,non-camp,neg_informal_0047,,,,,,informal
+16.791408482292894,20.312884714372256,neg_rural_chad_0000,chad,negative,non-camp,neg_rural_0048,,,,,,rural
+8.791953581449624,17.84845194485652,neg_rural_chad_0001,chad,negative,non-camp,neg_rural_0049,,,,,,rural
+8.1062429235289,18.671723326644784,neg_rural_chad_0002,chad,negative,non-camp,neg_rural_0050,,,,,,rural
+12.721078009447893,14.991839708759475,neg_rural_chad_0003,chad,negative,non-camp,neg_rural_0051,,,,,,rural
+9.095481513238052,19.65789734503131,neg_rural_chad_0004,chad,negative,non-camp,neg_rural_0052,,,,,,rural
+10.171193426275547,23.211514846507676,neg_rural_chad_0005,chad,negative,non-camp,neg_rural_0053,,,,,,rural
+16.74278884660332,17.122539041751835,neg_rural_chad_0006,chad,negative,non-camp,neg_rural_0054,,,,,,rural
+16.90055701861748,13.710124761942716,neg_rural_chad_0007,chad,negative,non-camp,neg_rural_0055,,,,,,rural
+22.786533003995537,18.54865519100874,neg_rural_chad_0008,chad,negative,non-camp,neg_rural_0056,,,,,,rural
+11.959782799972077,15.035196999101737,neg_urban_chad_0000,chad,negative,non-camp,neg_urban_0057,,,,,,urban
+9.136654517967628,18.547617523790993,neg_urban_chad_0001,chad,negative,non-camp,neg_urban_0058,,,,,,urban
+12.100456184380503,14.956111238713081,neg_urban_chad_0002,chad,negative,non-camp,neg_urban_0059,,,,,,urban
+9.07936483904332,18.397442064889756,neg_urban_chad_0003,chad,negative,non-camp,neg_urban_0060,,,,,,urban
+8.96778034875692,18.50746509270997,neg_urban_chad_0004,chad,negative,non-camp,neg_urban_0061,,,,,,urban
+12.252617877862315,14.9104896720395,neg_urban_chad_0005,chad,negative,non-camp,neg_urban_0062,,,,,,urban
+11.96908726680876,15.102006433494331,neg_urban_chad_0006,chad,negative,non-camp,neg_urban_0063,,,,,,urban
+9.061244162182044,18.447392148489087,neg_urban_chad_0007,chad,negative,non-camp,neg_urban_0064,,,,,,urban
+9.236713097090357,18.248786740544123,neg_urban_chad_0008,chad,negative,non-camp,neg_urban_0065,,,,,,urban
+8.545717798268113,13.863954216535173,neg_barren_chad_0000,chad,negative,non-camp,neg_barren_0066,,,,,,barren
+9.221539729391292,22.207685995184313,neg_barren_chad_0001,chad,negative,non-camp,neg_barren_0067,,,,,,barren
+8.963218102227502,23.504030630084415,neg_barren_chad_0002,chad,negative,non-camp,neg_barren_0068,,,,,,barren
+21.120819391699925,16.165312403676857,neg_barren_chad_0003,chad,negative,non-camp,neg_barren_0069,,,,,,barren
+8.230611347846434,13.942908822201225,neg_barren_chad_0004,chad,negative,non-camp,neg_barren_0070,,,,,,barren
+23.413379834160185,22.859361613664245,neg_barren_chad_0005,chad,negative,non-camp,neg_barren_0071,,,,,,barren
+11.718476333689553,22.8779931160185,neg_barren_chad_0006,chad,negative,non-camp,neg_barren_0072,,,,,,barren
+8.957407235943299,21.599290910128705,neg_barren_chad_0007,chad,negative,non-camp,neg_barren_0073,,,,,,barren
+9.23467807178043,14.464734014687757,neg_barren_chad_0008,chad,negative,non-camp,neg_barren_0074,,,,,,barren
+12.104678961134903,15.036246051592286,neg_informal_chad_0000,chad,negative,non-camp,neg_informal_0075,,,,,,informal
+12.123681315053378,15.034097057500569,neg_informal_chad_0001,chad,negative,non-camp,neg_informal_0076,,,,,,informal
+12.04227579324115,15.09311126721249,neg_informal_chad_0002,chad,negative,non-camp,neg_informal_0077,,,,,,informal
+12.04532843166245,15.027926830815774,neg_informal_chad_0003,chad,negative,non-camp,neg_informal_0078,,,,,,informal
+12.089938279152085,15.097456204083747,neg_informal_chad_0004,chad,negative,non-camp,neg_informal_0079,,,,,,informal
+12.049643466571457,15.04103236729001,neg_informal_chad_0005,chad,negative,non-camp,neg_informal_0080,,,,,,informal
+12.107740483824118,15.107182642606098,neg_informal_chad_0006,chad,negative,non-camp,neg_informal_0081,,,,,,informal
+12.080074118620235,15.024389750255125,neg_informal_chad_0007,chad,negative,non-camp,neg_informal_0082,,,,,,informal
+12.03139362877082,15.032965602999885,neg_informal_chad_0008,chad,negative,non-camp,neg_informal_0083,,,,,,informal
+-0.7486133586168301,33.227122704870716,neg_rural_uganda_0000,uganda,negative,non-camp,neg_rural_0084,,,,,,rural
+-0.8055547236173726,32.28481462391348,neg_rural_uganda_0001,uganda,negative,non-camp,neg_rural_0085,,,,,,rural
+2.457295883164453,32.69614135071496,neg_rural_uganda_0002,uganda,negative,non-camp,neg_rural_0086,,,,,,rural
+2.9219192345976204,31.019484829425615,neg_urban_uganda_0000,uganda,negative,non-camp,neg_urban_0087,,,,,,urban
+0.40603424140959504,32.44718079056063,neg_urban_uganda_0001,uganda,negative,non-camp,neg_urban_0088,,,,,,urban
+2.894551369314124,31.063922518362343,neg_urban_uganda_0002,uganda,negative,non-camp,neg_urban_0089,,,,,,urban
+3.004622262945407,32.187212249433436,neg_barren_uganda_0000,uganda,negative,non-camp,neg_barren_0090,,,,,,barren
+0.13411576955031856,31.0754542478513,neg_barren_uganda_0001,uganda,negative,non-camp,neg_barren_0091,,,,,,barren
+-1.4574902697295018,32.553589232797535,neg_barren_uganda_0002,uganda,negative,non-camp,neg_barren_0092,,,,,,barren
+0.2605897403750753,32.51403395970639,neg_informal_uganda_0000,uganda,negative,non-camp,neg_informal_0093,,,,,,informal
+3.0419114319316303,30.97662319121432,neg_informal_uganda_0001,uganda,negative,non-camp,neg_informal_0094,,,,,,informal
+0.3433023221600211,32.580436091561296,neg_informal_uganda_0002,uganda,negative,non-camp,neg_informal_0095,,,,,,informal
+15.330259234715959,51.909905591875656,neg_rural_yemen_0000,yemen,negative,non-camp,neg_rural_0096,,,,,,rural
+12.232895441601444,43.21468323837501,neg_rural_yemen_0001,yemen,negative,non-camp,neg_rural_0097,,,,,,rural
+17.824763156542055,52.065035926744834,neg_rural_yemen_0002,yemen,negative,non-camp,neg_rural_0098,,,,,,rural
+12.683750667107915,45.05107705261566,neg_urban_yemen_0000,yemen,negative,non-camp,neg_urban_0099,,,,,,urban
+12.912386023359364,45.07711857664194,neg_urban_yemen_0001,yemen,negative,non-camp,neg_urban_0100,,,,,,urban
+12.748525764938524,44.99470625562658,neg_urban_yemen_0002,yemen,negative,non-camp,neg_urban_0101,,,,,,urban
+18.280541429873807,52.97460443065242,neg_barren_yemen_0000,yemen,negative,non-camp,neg_barren_0102,,,,,,barren
+17.445284376620457,44.85584461177887,neg_barren_yemen_0001,yemen,negative,non-camp,neg_barren_0103,,,,,,barren
+13.797847633997222,43.16492888772259,neg_barren_yemen_0002,yemen,negative,non-camp,neg_barren_0104,,,,,,barren
+12.809443366375646,45.024617324419275,neg_informal_yemen_0000,yemen,negative,non-camp,neg_informal_0105,,,,,,informal
+15.362466419045635,44.171033467392405,neg_informal_yemen_0001,yemen,negative,non-camp,neg_informal_0106,,,,,,informal
+12.842097047248746,45.02655317227353,neg_informal_yemen_0002,yemen,negative,non-camp,neg_informal_0107,,,,,,informal
+5.981300720456936,25.361703573852655,neg_rural_south_sudan_0000,south_sudan,negative,non-camp,neg_rural_0108,,,,,,rural
+4.500538057071856,23.704561684368866,neg_rural_south_sudan_0001,south_sudan,negative,non-camp,neg_rural_0109,,,,,,rural
+3.974709830187276,25.62476480140752,neg_rural_south_sudan_0002,south_sudan,negative,non-camp,neg_rural_0110,,,,,,rural
+4.689217495745782,31.64281177379995,neg_urban_south_sudan_0000,south_sudan,negative,non-camp,neg_urban_0111,,,,,,urban
+6.161706964459531,31.514476794902738,neg_urban_south_sudan_0001,south_sudan,negative,non-camp,neg_urban_0112,,,,,,urban
+6.201629445328003,31.715001779204457,neg_urban_south_sudan_0002,south_sudan,negative,non-camp,neg_urban_0113,,,,,,urban
+3.604122037783579,25.710545104052517,neg_barren_south_sudan_0000,south_sudan,negative,non-camp,neg_barren_0114,,,,,,barren
+10.269642386559557,30.58612047330209,neg_barren_south_sudan_0001,south_sudan,negative,non-camp,neg_barren_0115,,,,,,barren
+9.744292064809935,28.11391287212924,neg_barren_south_sudan_0002,south_sudan,negative,non-camp,neg_barren_0116,,,,,,barren
+4.9197034657837575,31.667920002430773,neg_informal_south_sudan_0000,south_sudan,negative,non-camp,neg_informal_0117,,,,,,informal
+4.783616271049469,31.54054298341287,neg_informal_south_sudan_0001,south_sudan,negative,non-camp,neg_informal_0118,,,,,,informal
+4.915842918090098,31.679546447258364,neg_informal_south_sudan_0002,south_sudan,negative,non-camp,neg_informal_0119,,,,,,informal
