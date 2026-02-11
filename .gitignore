@@ -2,8 +2,13 @@
 data/sentinel2/
 data/tiles/
 data/labels/*.geojson
+data/labels/*.zip
+data/labels/all_locations.csv
+data/labels/all_camps_merged.csv
+data/labels/locations_map.png
 *.tif
 *.tiff
+*.npy
 
 # Python
 __pycache__/

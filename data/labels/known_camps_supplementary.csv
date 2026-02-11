@@ -1,0 +1,36 @@
+name,lat,lon,country,source
+Bidi Bidi,3.383,31.358,south_sudan,unhcr_known
+Palorinya,3.472,31.637,south_sudan,unhcr_known
+Rhino Camp,3.167,31.25,south_sudan,unhcr_known
+Imvepi,3.3,31.15,south_sudan,unhcr_known
+Adjumani,3.38,31.78,south_sudan,unhcr_known
+Kiryandongo,2.05,32.167,south_sudan,unhcr_known
+Nakivale,-0.8,30.45,south_sudan,unhcr_known
+Maban (Doro),9.767,33.433,south_sudan,unhcr_known
+Maban (Yusuf Batil),9.75,33.4,south_sudan,unhcr_known
+Maban (Gendrassa),9.733,33.45,south_sudan,unhcr_known
+Maban (Kaya),9.8,33.417,south_sudan,unhcr_known
+Bentiu POC,9.233,29.833,south_sudan,unhcr_known
+Malakal POC,9.533,31.65,south_sudan,unhcr_known
+Juba POC (UN House),4.833,31.617,south_sudan,unhcr_known
+Wau POC,7.7,28.0,south_sudan,unhcr_known
+Ajuong Thok,9.45,29.617,south_sudan,unhcr_known
+Pamir,9.483,29.583,south_sudan,unhcr_known
+Al Hol,36.39,40.73,syria,unhcr_known
+Ain Issa,36.374,38.86,syria,unhcr_known
+Azaz,36.587,37.05,syria,unhcr_known
+Afrin,36.512,36.87,syria,unhcr_known
+Areesha,36.367,40.617,syria,unhcr_known
+Roj,37.017,41.7,syria,unhcr_known
+Washokani,36.817,40.167,syria,unhcr_known
+Atme,36.31,36.65,syria,unhcr_known
+Sarmada,36.367,36.7,syria,unhcr_known
+Maarat Misrin,36.083,36.683,syria,unhcr_known
+Dana,36.45,36.783,syria,unhcr_known
+Deir Ballut,36.233,36.583,syria,unhcr_known
+Kharaz,13.183,43.717,yemen,unhcr_known
+Al-Mazrak 1,16.05,43.567,yemen,unhcr_known
+Al-Mazrak 2,16.067,43.55,yemen,unhcr_known
+Markazi,14.117,42.767,yemen,unhcr_known
+Mayfa IDP camp,15.433,50.15,yemen,unhcr_known
+Dharawan,15.467,44.35,yemen,unhcr_known

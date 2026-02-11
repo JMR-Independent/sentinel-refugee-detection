@@ -71,14 +71,22 @@ def query_osm_camps(country, bounds=None):
     s, w, n, e = bounds
 
     query = f"""
-    [out:json][timeout:60];
+    [out:json][timeout:120];
     (
       node["place"="camp"]({s},{w},{n},{e});
       node["refugee"="yes"]({s},{w},{n},{e});
       node["camp:type"="refugee"]({s},{w},{n},{e});
+      node["social_facility"="refugee_camp"]({s},{w},{n},{e});
+      node["amenity"="refugee_camp"]({s},{w},{n},{e});
+      node["landuse"="refugee_camp"]({s},{w},{n},{e});
       way["place"="camp"]({s},{w},{n},{e});
       way["refugee"="yes"]({s},{w},{n},{e});
       way["camp:type"="refugee"]({s},{w},{n},{e});
+      way["social_facility"="refugee_camp"]({s},{w},{n},{e});
+      way["amenity"="refugee_camp"]({s},{w},{n},{e});
+      way["landuse"="refugee_camp"]({s},{w},{n},{e});
+      relation["refugee"="yes"]({s},{w},{n},{e});
+      relation["boundary"="refugee_camp"]({s},{w},{n},{e});
     );
     out center;
     """
