@@ -1,0 +1,65 @@
+# Sentinel-2 Refugee Camp Detection - Configuration
+# ================================================
+
+# Sentinel-2 bands to use
+bands:
+  - B02  # Blue (10m)
+  - B03  # Green (10m)
+  - B04  # Red (10m)
+  - B08  # NIR (10m)
+  - B11  # SWIR1 (20m, resampled to 10m)
+  - B12  # SWIR2 (20m, resampled to 10m)
+
+# Tile parameters
+tile_size: 64          # pixels per side
+resolution: 10         # meters per pixel
+# => each tile covers 640m x 640m
+
+# Sentinel-2 search parameters
+cloud_threshold: 20    # max cloud cover percentage
+date_range:
+  - "2022-01-01"
+  - "2023-12-31"
+
+# Geographic split
+train_countries:
+  - syria
+  - south_sudan
+test_countries:
+  - chad
+  - ethiopia
+  - yemen
+
+# Negative sample generation
+negative_buffer_km: 10   # min distance from any camp
+negative_ratio: 3        # negatives per positive
+
+# Model
+model:
+  backbone: resnet18
+  pretrained: true
+  in_channels: 6
+  num_classes: 1         # binary (sigmoid output)
+  freeze_epochs: 5       # freeze backbone for N epochs
+  lr: 0.0001
+  batch_size: 32
+  max_epochs: 50
+  patience: 5            # early stopping patience
+  pos_weight: 3.0        # BCEWithLogitsLoss weight for positives
+
+# Augmentation
+augmentation:
+  random_rotation: true   # 90/180/270 degrees
+  horizontal_flip: true
+  vertical_flip: true
+  brightness_jitter: 0.1  # +/- 10% brightness
+
+# Normalization
+normalization:
+  method: percentile
+  low: 2                  # 2nd percentile
+  high: 98                # 98th percentile
+
+# Inference
+inference:
+  confidence_threshold: 0.8  # for candidate detections
