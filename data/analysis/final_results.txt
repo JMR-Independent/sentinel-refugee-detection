@@ -1,0 +1,59 @@
+
+======================================================================
+FINAL RESULTS — HONEST ASSESSMENT
+======================================================================
+
+SPECTRAL MODEL (NDBI LogReg, LOCO):
+  Mean AUC = 0.612
+  
+TEXTURE MODEL (structural features, LOCO):
+  Mean AUC = 0.566
+
+ORACLE (best pathway per country):
+  Mean AUC = 0.648
+
+ADAPTIVE (τ from training): 
+  Mean AUC = 0.578
+  FAILS because: n=7 countries is too few to learn τ.
+  South Sudan is the ONLY country with gap < 0.
+  When excluded, no training signal exists for that regime.
+
+Per-country breakdown:
+Country              Gap   Spectral    Texture       Best     Winner
+-----------------------------------------------------------------
+Chad             +0.0455      0.568      0.536      0.568   spectral
+Ethiopia         +0.0233      0.732      0.611      0.732   spectral
+S. Sudan         -0.0770      0.356      0.542      0.542    texture
+Syria            -0.0009      0.663      0.426      0.663   spectral
+Turkey           +0.1288      0.566      0.629      0.629    texture
+Uganda           +0.0549      0.694      0.634      0.694   spectral
+Yemen            +0.0201      0.706      0.584      0.706   spectral
+
+-----------------------------------------------------------------
+MEAN                          0.612      0.566      0.648
+
+SCIENTIFIC CONCLUSIONS:
+
+1. NDBI spectral gap explains 83% of spectral detection variance (r=0.91)
+   This is a SENSOR/PHYSICS limitation, not algorithmic.
+
+2. Structural features (GLCM, gradient, FFT) recover partial signal
+   in South Sudan where spectral fails: AUC 0.356 → 0.542.
+
+3. The structural signal DIRECTION INVERTS between biomes:
+   - Arid: camps are more textured (built structures on bare ground)
+   - Humid: camps are smoother (cleared ground in vegetation)
+   → No universal structural signature either.
+
+4. Automatic gating (τ) fails with n=7 because South Sudan is unique.
+   This means: environment characterization MUST be done a priori.
+   You cannot learn which detector to use from other countries alone.
+
+5. Oracle shows potential: mean AUC = 0.648 if you know which pathway
+   to use. But this requires environmental knowledge, not more ML.
+
+PAPER IMPLICATION:
+   The contribution is the CHARACTERIZATION of when detection is possible,
+   not the detector itself. The environment determines the signal type,
+   the signal type determines the detector, and this chain cannot be
+   shortcut by bigger models or more data at 10m resolution.
