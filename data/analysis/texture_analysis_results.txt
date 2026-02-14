@@ -1,0 +1,79 @@
+
+================================================================================
+TEXTURE ANALYSIS RESULTS — COMPREHENSIVE REPORT
+================================================================================
+
+1. HYPOTHESIS
+   Camp structures create detectable spatial organization even when spectrally
+   invisible. At 10m, this manifests as:
+   - Higher GLCM homogeneity (regular spacing)
+   - Lower gradient magnitude (cleared, leveled ground in humid biomes)
+   - Lower edge fraction (fewer natural edges in cleared areas)
+   - Lower directional entropy (aligned structures)
+
+2. SOUTH SUDAN DISCRIMINATION (n=50 camps, 104 negatives)
+   Feature                  Cohen's d    p-value   Direction
+   GLCM dissimilarity        -0.70       0.0002    camp < neg ***
+   GLCM homogeneity          +0.68       0.0003    camp > neg ***
+   Gradient magnitude (mean) -0.66       0.0003    camp < neg ***
+   Edge fraction             -0.59       0.0017    camp < neg **
+   GLCM contrast             -0.59       0.0002    camp < neg ***
+   GLCM energy               +0.50       0.0051    camp > neg **
+   GLCM correlation          +0.48       0.0016    camp > neg **
+   
+   Interpretation: Camps in South Sudan are SMOOTHER and more HOMOGENEOUS
+   than natural surroundings. The "cleared ground" effect is detectable
+   even though the material (mud) is spectrally identical.
+
+3. LOCO AUC COMPARISON
+   Country        Spectral    Texture    Improvement
+   chad             0.568      0.536      -0.032
+   ethiopia         0.732      0.611      -0.121
+   south_sudan      0.356      0.542      +0.186  ← KEY RESULT
+   syria            0.663      0.426      -0.237
+   turkey           0.566      0.629      +0.063
+   uganda           0.694      0.634      -0.060
+   yemen            0.706      0.584      -0.122
+   
+   Mean spectral:   0.612
+   Mean texture:    0.566
+   Oracle (best):   0.648
+
+4. DUAL-PATHWAY RESULTS (threshold = 0, sign-based)
+   Mean AUC = 0.605 (vs 0.612 spectral-only)
+   South Sudan: 0.356 → 0.542 (+0.186)
+   But Syria: 0.663 → 0.426 (-0.237)
+
+5. ENSEMBLE (steepness=100, signed gap)
+   Mean AUC = 0.619 (best ensemble, vs 0.612 spectral)
+   South Sudan: 0.356 → 0.542 (w_spectral=0.00)
+   Yemen: 0.706 → 0.735 (improvement!)
+
+6. KEY FINDING
+   Texture features DO contain discriminative signal in humid biomes
+   where spectral fails. However:
+   
+   a) Texture features are NOT universally robust either.
+      The direction flips: camps are "more textured" in arid environments
+      but "smoother" in humid environments.
+   
+   b) A global texture model performs WORSE than a global spectral model
+      (0.566 vs 0.612) because the feature directions are inconsistent.
+   
+   c) The BEST strategy is environment-adaptive:
+      - Arid (NDBI gap > 0): use spectral features
+      - Humid (NDBI gap ≤ 0): use texture features
+      - Ensemble mean AUC = 0.619
+
+7. IMPLICATION FOR THE PAPER
+   This STRENGTHENS the observability argument:
+   - Detection is environment-dependent regardless of feature type
+   - Spectral: limited by material contrast
+   - Texture: limited by organization contrast direction flip
+   - Both confirm: no universal camp signature exists at 10m
+   - Environment must be accounted for in any detection pipeline
+   
+   The texture analysis adds a second dimension to the paper:
+   it shows that even when spectral fails, structural features can
+   partially recover detection, but the detectability limit shifts
+   rather than disappears.
