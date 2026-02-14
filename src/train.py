@@ -42,7 +42,21 @@ def train_model(model, train_dataset, val_dataset, config, device="cpu",
     model = model.to(device)
 
     # Loss with class imbalance weighting
-    pos_weight = torch.tensor([mc["pos_weight"]], device=device)
+    pos_weight_cfg = mc.get("pos_weight", "auto")
+    if pos_weight_cfg in (None, "auto"):
+        # Derive from training manifest if available
+        if hasattr(train_dataset, "manifest"):
+            labels = train_dataset.manifest["label"]
+            n_pos = labels.isin(["camp", "camp_context"]).sum()
+            n_neg = (~labels.isin(["camp", "camp_context"])).sum()
+            pos_weight_value = (n_neg / max(n_pos, 1)) if n_pos > 0 else 1.0
+        else:
+            pos_weight_value = 1.0
+        print(f"Auto pos_weight set to {pos_weight_value:.2f}")
+    else:
+        pos_weight_value = float(pos_weight_cfg)
+
+    pos_weight = torch.tensor([pos_weight_value], device=device)
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
     optimizer = torch.optim.Adam(

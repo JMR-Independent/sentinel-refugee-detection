@@ -39,6 +39,12 @@ Then run the notebooks in order:
 - [UNHCR Data](https://data.unhcr.org/) for camp locations
 - [OpenStreetMap](https://www.openstreetmap.org/) via Overpass API
 
+## Responsible Use
+
+This project identifies candidate informal settlements from satellite imagery. It must not be
+used for surveillance, targeting, or any activity that could harm vulnerable populations.
+All detections require human review and local contextual verification.
+
 ## License
 
 MIT

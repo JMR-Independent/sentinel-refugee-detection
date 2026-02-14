@@ -1,0 +1,51 @@
+======================================================================
+OUT-OF-SAMPLE VALIDATION: NDBI Gap vs Detectability (AUC)
+======================================================================
+
+--- LOCO Results (n=7 countries) ---
+  chad             AUC=0.652  NDBI_gap=+0.0455
+  ethiopia         AUC=0.678  NDBI_gap=+0.0233
+  south_sudan      AUC=0.238  NDBI_gap=-0.0770
+  syria            AUC=0.531  NDBI_gap=-0.0009
+  turkey           AUC=0.773  NDBI_gap=+0.1288
+  uganda           AUC=0.654  NDBI_gap=+0.0549
+  yemen            AUC=0.658  NDBI_gap=+0.0201
+
+  Country-level r = +0.912
+  R² = 0.832
+
+--- Per-Camp Correlation (n=101) ---
+  r = +0.597
+  R² = 0.356
+
+--- Bootstrap 95% CI (n_boot=10000) ---
+  CI = [+0.558, +0.995]
+  P(r < 0) = 0.0204
+
+--- Permutation Test (n_perm=10000) ---
+  p-value = 0.0046
+
+--- Leave-2-Countries-Out (n=42 evaluations) ---
+  r = +0.872
+  R² = 0.760
+
+  Per-country AUC stability (L2CO):
+    chad             mean=0.642 ± 0.058  (n=6)
+    ethiopia         mean=0.679 ± 0.037  (n=6)
+    south_sudan      mean=0.235 ± 0.005  (n=6)
+    syria            mean=0.527 ± 0.023  (n=6)
+    turkey           mean=0.750 ± 0.055  (n=6)
+    uganda           mean=0.654 ± 0.012  (n=6)
+    yemen            mean=0.660 ± 0.019  (n=6)
+
+--- Conclusion ---
+The correlation between NDBI spectral gap and LOCO AUC is robust:
+  - Country-level: r=+0.912 (R²=0.832)
+  - Per-camp: r=+0.597
+  - Bootstrap CI excludes zero: [+0.558, +0.995]
+  - Permutation p=0.0046
+  - L2CO: r=+0.872 (stable across training set compositions)
+
+Implication: 83% of cross-country detection variance is explained
+by NDBI spectral contrast alone. This is a sensor/physics limitation,
+not an algorithm limitation.

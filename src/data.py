@@ -110,7 +110,8 @@ def resize_tile(tile, target_size):
 # ---------------------------------------------------------------------------
 
 def compute_norm_stats(manifest_path, split="train", low_pct=2, high_pct=98,
-                       channel_names=None):
+                       channel_names=None, max_tiles=None, sample_pixels=2000,
+                       seed=42):
     """Compute per-channel percentile statistics from training tiles.
 
     Each channel (R, G, B, NDVI, NDBI, SWIR_ratio) is normalized INDEPENDENTLY.
@@ -131,6 +132,13 @@ def compute_norm_stats(manifest_path, split="train", low_pct=2, high_pct=98,
     channel_names : list of str, optional
         Names for reporting.
 
+    max_tiles : int, optional
+        Maximum number of tiles to sample for stats. If None, use all tiles.
+    sample_pixels : int
+        Number of pixels to randomly sample per tile (per channel). Reduces RAM.
+    seed : int
+        Random seed for sampling.
+
     Returns
     -------
     dict
@@ -139,13 +147,28 @@ def compute_norm_stats(manifest_path, split="train", low_pct=2, high_pct=98,
     if channel_names is None:
         channel_names = ["R", "G", "B", "NDVI", "NDBI", "SWIR_ratio"]
 
+    rng = np.random.default_rng(seed)
     manifest = pd.read_csv(manifest_path)
-    manifest = manifest[manifest["split"] == split]
+    manifest = manifest[manifest["split"] == split].reset_index(drop=True)
+
+    if max_tiles is not None and len(manifest) > max_tiles:
+        manifest = manifest.sample(n=max_tiles, random_state=seed).reset_index(drop=True)
+        print(f"Sampling {max_tiles} tiles for normalization stats")
 
     all_values = []
     for _, row in manifest.iterrows():
         tile = np.load(row["path"]).astype(np.float32)
-        all_values.append(tile.reshape(tile.shape[0], -1))
+        c, h, w = tile.shape
+        flat = tile.reshape(c, -1)
+
+        if sample_pixels is not None and flat.shape[1] > sample_pixels:
+            idx = rng.choice(flat.shape[1], size=sample_pixels, replace=False)
+            flat = flat[:, idx]
+
+        all_values.append(flat)
+
+    if len(all_values) == 0:
+        raise ValueError("No tiles found for normalization statistics.")
 
     all_values = np.concatenate(all_values, axis=1)
 
@@ -235,7 +258,9 @@ class SatelliteAugmentation:
         if self.brightness > 0:
             factor = 1.0 + np.random.uniform(-self.brightness, self.brightness)
             tile = tile * factor
-            tile = np.clip(tile, 0.0, 1.0)
+            # Only clip if tile appears to be normalized
+            if tile.min() >= 0.0 and tile.max() <= 1.5:
+                tile = np.clip(tile, 0.0, 1.0)
 
         return tile
 
@@ -309,15 +334,24 @@ def create_manifest(tiles_dir, labels_df, output_path, train_countries,
     train_mask = manifest["split"] == "train"
 
     if by_scene and "scene_id" in manifest.columns:
-        # Scene-level split: all tiles from same scene go to same split
-        train_scenes = manifest[train_mask]["scene_id"].unique()
+        # Scene-level split: all tiles from same scene go to same split.
+        # If scene_id is missing/unknown, fall back to tile-level grouping.
+        scene_ids = manifest["scene_id"].fillna("unknown").astype(str)
+        scene_group = scene_ids.where(scene_ids != "unknown", manifest["tile_id"].astype(str))
+
+        manifest["scene_group"] = scene_group
+        train_scenes = manifest[train_mask]["scene_group"].unique()
         rng.shuffle(train_scenes)
         n_val_scenes = max(1, int(len(train_scenes) * val_fraction))
         val_scenes = set(train_scenes[:n_val_scenes])
 
-        val_mask = train_mask & manifest["scene_id"].isin(val_scenes)
+        val_mask = train_mask & manifest["scene_group"].isin(val_scenes)
         manifest.loc[val_mask, "split"] = "val"
-        print(f"Scene-level split: {len(train_scenes)} scenes -> "
+        n_unknown = (scene_ids == "unknown").sum()
+        if n_unknown > 0:
+            print(f"WARNING: {n_unknown} tiles with unknown scene_id; "
+                  "using tile_id as group to avoid leakage.")
+        print(f"Scene-level split: {len(train_scenes)} scene groups -> "
               f"{len(train_scenes) - n_val_scenes} train, {n_val_scenes} val")
     else:
         # Fallback: random row-level split
@@ -372,6 +406,10 @@ def verify_split_integrity(manifest_path):
         else:
             print(f"OK: No scene overlap between train ({len(train_scenes)}) "
                   f"and val ({len(val_scenes)})")
+        n_unknown = (manifest["scene_id"].astype(str) == "unknown").sum()
+        if n_unknown > 0:
+            print(f"WARN: {n_unknown} tiles have scene_id='unknown' "
+                  "— leakage checks may be weaker.")
 
     # Check 2: Country-level separation between train/val and test
     trainval_countries = set(
