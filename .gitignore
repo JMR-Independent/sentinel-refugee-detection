@@ -34,3 +34,7 @@ Thumbs.db
 *.pth
 *.pt
 checkpoints/
+
+# Submission artifacts (keep only source .tex)
+paper/*.zip
+paper/ref_check*/
