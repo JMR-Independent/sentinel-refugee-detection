@@ -1,0 +1,372 @@
+% =====================================================================
+% IEEE GRSL - REVIEW VERSION (single column, double space)
+% Identical content to robles_leyton_grsl_2026.tex
+% =====================================================================
+
+\documentclass[12pt, journal, onecolumn, draftcls]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{setspace}
+
+\hyphenation{Senti-nel}
+
+\doublespacing
+
+\begin{document}
+
+\title{NDBI Spectral Gap Predicts Refugee Camp Detectability from Sentinel-2: Environmental Limits at 10\,m Resolution}
+
+\author{Jose~Miguel~Robles~Leyton%
+\thanks{J. M. Robles Leyton is an Independent Researcher, Utah, USA
+(e-mail: jose.m.robles7@gmail.com).}%
+\thanks{Manuscript received XX, 2026.}}
+
+\maketitle
+
+\begin{abstract}
+Detecting refugee camps from medium-resolution satellite imagery is critical
+for humanitarian response, yet cross-country generalization remains poorly
+understood. We investigate when refugee camps are spectrally detectable using
+Sentinel-2 at 10\,m resolution. Using 101 camps across seven countries and
+1689 image tiles, we evaluate a leave-one-country-out spectral classifier
+based on the Normalized Difference Built-Up Index. Detection performance
+varies dramatically by country, with area under the ROC curve ranging from
+0.24 to 0.77. This variance is explained by a single physical variable: the
+NDBI spectral gap between camp and background. Country-level Pearson
+correlation is 0.912, explaining 83\% of the variance, confirmed by
+permutation testing and leave-two-countries-out validation. Camps built with
+concrete or metal on rural land are detectable, while camps of mud and thatch
+on spectrally similar soil are invisible. A convolutional neural network
+trained cross-country performs below chance, confirming a sensor-physics
+limitation rather than an algorithmic one. Structural texture features
+partially recover signal where spectral contrast is absent, but their
+discriminative direction varies by environment, precluding any universal
+settlement signature at this resolution.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Remote sensing, Sentinel-2, refugee settlements, spectral analysis,
+built-up index, image classification, humanitarian applications
+\end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
+
+\section{Introduction}
+
+\IEEEPARstart{S}{atellite-based} detection of refugee and internally
+displaced persons (IDP) camps is essential for humanitarian operations when
+ground access is restricted. Very high resolution (VHR, $<$1\,m) imagery
+enables dwelling-level extraction~\cite{Quinn2018, Gella2022}, but coverage
+is limited and commercially licensed. Sentinel-2, a freely available
+ESA mission with global coverage at 10\,m and a 5-day revisit, offers a
+scalable alternative, yet only two studies have tested it for refugee
+camps~\cite{Wendt2017, Wernicke2023}, with no cross-country analysis.
+
+Global settlement products derived from Sentinel-2 fail catastrophically on
+refugee camps. Van Den Hoek and Friedrich~\cite{VanDenHoek2021} showed that
+GHS-BUILT-S2 achieves a median F1 of only 0.15 at 30~refugee settlements in
+Uganda, while the World Settlement Footprint missed 8 of 30 entirely.
+Pesaresi~et~al.~\cite{Pesaresi2013} acknowledged that ``scattered huts in
+rural areas built with traditional materials such as straw or clay'' are
+``not distinguishable from background.'' However, no prior work has
+quantified \emph{when} or \emph{why} detection fails.
+
+We address a different question than detection: \emph{under what
+environmental conditions is spectral detection physically possible?} We show
+that the NDBI spectral gap ($\Delta$NDBI $=$ mean NDBI of camp $-$ mean NDBI
+of background) explains 83\% of cross-country detection variance. This
+transforms scattered qualitative observations~\cite{Kuffer2016, Rasul2018}
+into a quantitative, predictive framework. Our contribution is the
+\emph{characterization} of detectability limits, not a new detector.
+
+\section{Data and Methods}
+
+\subsection{Dataset}
+
+We compiled 101~refugee/IDP camps across seven countries---selected to
+span arid (Chad, Yemen), semi-arid (Turkey, Syria, Ethiopia), and humid
+(Uganda, South Sudan) biomes---from UNHCR/HDX databases and
+OpenStreetMap (Table~\ref{tab:loco}). For each camp, we downloaded
+Sentinel-2 L2A imagery (2022--2023, cloud $<$20\%) from Microsoft
+Planetary Computer. We extracted six spectral bands (B02--B04, B08, B11,
+B12) and derived three indices (NDVI, NDBI, SWIR ratio), producing
+128$\times$128 pixel tiles at 10\,m (1.28\,km$\times$1.28\,km). SWIR bands
+(B11, B12; native 20\,m) were resampled to 10\,m with bilinear
+interpolation. Each camp has five tiles (center~$+$~four adjacent); negative
+samples (rural, urban, barren, informal settlements) were placed $>$10\,km
+from any camp. The final dataset comprises 1689~tiles (505~camp,
+1184~negative).
+
+\subsection{Spectral Model}
+
+We trained a logistic regression classifier on three NDBI-derived features
+(mean, standard deviation, and fraction of pixels with NDBI~$>$~0) with
+class-weight balancing. Evaluation follows leave-one-country-out
+cross-validation (LOCO): for each of seven countries, we train on the
+remaining six and test on the held-out country, reporting
+area-under-the-ROC-curve (AUC).
+
+\subsection{NDBI Spectral Gap}
+
+For each country, we define the spectral gap as
+\begin{equation}
+\Delta\text{NDBI} = \overline{\text{NDBI}}_{\text{camp}} -
+\overline{\text{NDBI}}_{\text{neg}}
+\label{eq:gap}
+\end{equation}
+where averages are taken over all tiles in that country. This measures
+whether camp building materials produce a spectral contrast against the
+natural background.
+
+\subsection{Structural Texture Features}
+
+To test whether spatial structure compensates for spectral invisibility, we
+computed 17~texture features from the Red band (B04, native 10\,m)
+following~\cite{Wurm2017}: gradient
+magnitude (Sobel), edge density, directional entropy, GLCM properties
+(homogeneity, contrast, correlation, dissimilarity, energy; distance$=$2,
+four angles, 16~gray levels), and nine FFT radial power-spectrum bins (17~features total). A separate
+logistic regression model was trained on these features under the same LOCO
+protocol.
+
+\subsection{CNN Baseline}
+
+As a morphological baseline, we trained a ResNet-18 on all nine
+channels (six bands $+$ three indices) using four countries (Chad,
+Ethiopia, Syria, Uganda) and tested on the remaining three (Turkey,
+Yemen, South Sudan), with 50~epochs, Adam optimizer, and batch size~32.
+
+\subsection{Statistical Validation}
+
+We assess the $\Delta$NDBI--AUC correlation using: (1) Pearson $r$ at
+country level ($n=7$); (2) leave-two-countries-out (L2CO, $n=42$
+evaluations); (3) bootstrap confidence interval (10,000 resamples); and (4)
+exact permutation test ($7!=5040$ permutations).
+
+\section{Results}
+
+\subsection{Spectral Detectability is Environment-Dependent}
+
+LOCO AUC varies from 0.238 (South Sudan) to 0.773 (Turkey), with mean
+0.598$\pm$0.174 (Table~\ref{tab:loco}). Country-level correlation between
+$\Delta$NDBI~(\ref{eq:gap}) and LOCO AUC yields $r=+0.912$ ($R^2=0.832$;
+Fig.~\ref{fig:main}a). The permutation test confirms significance
+($p=0.005$; only 25 of 5040 permutations produce $|r|\geq0.912$). Bootstrap
+95\% CI is $[+0.56, +1.00]$, though we note under-coverage at $n=7$. L2CO
+validation ($n=42$) yields $r=+0.872$ ($R^2=0.760$), with per-country AUC
+stability: South Sudan consistently undetectable
+($0.235\pm0.005$), Turkey consistently detectable ($0.750\pm0.055$).
+
+\begin{table}[t]
+\centering
+\caption{LOCO results: spectral and structural models}
+\label{tab:loco}
+\begin{tabular}{@{}lrccc@{}}
+\toprule
+Country & Camps & $\Delta$NDBI & \multicolumn{2}{c}{LOCO AUC} \\
+\cmidrule(l){4-5}
+ & & & Spectral & Texture \\
+\midrule
+Turkey      & 6  & $+$0.129 & 0.773 & 0.629 \\
+Uganda      & 6  & $+$0.055 & 0.654 & 0.634 \\
+Chad        & 19 & $+$0.046 & 0.652 & 0.536 \\
+Ethiopia    & 26 & $+$0.023 & 0.678 & 0.611 \\
+Yemen       & 6  & $+$0.020 & 0.658 & 0.584 \\
+Syria       & 28 & $-$0.001 & 0.531 & 0.426 \\
+S.~Sudan    & 10 & $-$0.077 & 0.238 & \textbf{0.542} \\
+\midrule
+Mean (Total) & 101 & & 0.598 & 0.566 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{roble1}
+\caption{Environmental determinants of refugee camp detectability.
+(a)~NDBI spectral gap versus LOCO AUC at country level ($r=+0.912$,
+$R^2=0.832$, permutation $p=0.005$). Each point is one country.
+(b)~ROC curves for South Sudan comparing spectral (AUC$=$0.24) and
+structural texture (AUC$=$0.54) pathways.
+(c)~Cohen's $d$ for GLCM homogeneity by country. The structural
+signal direction varies by environment: South Sudan camps are smoother
+than surroundings ($d>0$), while arid-country camps are more
+textured ($d<0$), illustrating the biome-dependent inversion.}
+\label{fig:main}
+\end{figure*}
+
+\subsection{Physical Mechanism}
+
+Turkey ($\Delta$NDBI$=+0.129$): concrete container camps on rural land
+create strong spectral contrast. South Sudan
+($\Delta$NDBI$=-0.077$): mud-and-thatch camps have \emph{lower} NDBI than
+surrounding vegetation---the camp is spectrally \emph{invisible}. Syria
+($\Delta$NDBI$\approx0$): camps in semi-urbanized areas are indistinguishable
+from background. A ResNet-18 CNN trained on four countries and tested on
+three unseen countries achieves test AUC$=$0.279 (versus 0.728 for NDBI
+logistic regression on the same split), confirming the signal is
+physical, not morphological, at 10\,m.
+
+\subsection{Structural Features Partially Recover Signal}
+
+In South Sudan, texture features improve AUC from 0.238 to 0.542
+(Fig.~\ref{fig:main}b). Camps are significantly smoother and more
+homogeneous than surroundings (GLCM homogeneity Cohen's $d=+0.68$,
+$p<0.001$; gradient magnitude $d=-0.66$, $p<0.001$), reflecting cleared
+ground amid vegetation.
+
+However, the \emph{direction} of textural discrimination varies by
+environment (Fig.~\ref{fig:main}c): in arid countries, camps tend to be
+more textured than bare surroundings (structures on bare ground), while
+in South Sudan, camps are smoother (cleared ground in vegetation). A global
+texture model therefore performs worse than the spectral model
+(0.566 vs.\ 0.598). An oracle selector (best pathway per country) reaches
+0.641, but learning the switching threshold from training countries fails
+($n=7$ is insufficient, and South Sudan is the only country with negative
+gap).
+
+\section{Discussion}
+
+Prior work has documented individual pieces of this puzzle: NDBI limitations
+in arid zones~\cite{Zha2003, Rasul2018}, sub-pixel detection limits for
+Sentinel-2~\cite{Radoux2016}, settlement product failures on refugee
+camps~\cite{VanDenHoek2021}, and CNN generalization
+challenges~\cite{Gella2022, Corbane2021}. No prior study has connected these
+into a unified physical framework: sensor physics $\to$ spectral contrast
+$\to$ statistical separability $\to$ ML performance.
+
+The $\Delta$NDBI metric transforms Pesaresi et al.'s qualitative
+observation~\cite{Pesaresi2013} into a quantitative predictor: when
+$\Delta$NDBI$\leq0$, spectral detection is not viable regardless of
+classifier complexity. This explains why global products
+fail~\cite{VanDenHoek2021}: they are validated on cities where spectral
+contrast is high, not on informal settlements where it can vanish.
+
+The texture signal inversion between biomes is, to our knowledge,
+unreported. It implies that no universal camp signature exists at 10\,m
+resolution---neither spectral nor structural. Any detection pipeline must
+incorporate environmental characterization \emph{a priori}.
+
+\textbf{Limitations:} Our study includes seven countries ($n=7$ for
+country-level analysis), mitigated by L2CO ($n=42$) and per-camp ($n=101$)
+validations. SWIR bands are resampled from 20\,m, and our texture analysis
+uses the 10\,m Red band. Future work should explore Sentinel-1 SAR~\cite{Braun2019}, whose
+backscatter responds to surface roughness rather than reflectance and could
+recover geometric signatures in spectrally invisible environments.
+
+\section{Conclusion}
+
+Refugee camp detectability from Sentinel-2 at 10\,m is contingent on
+environmental context. The NDBI spectral gap---a simple, interpretable
+metric---explains 83\% of cross-country detection variance and can serve as
+a pre-screening tool before any classification effort. No universal camp
+signature exists at this resolution: spectral features fail when building
+materials match background, and structural features invert direction between
+biomes. These are sensor-physics constraints, not algorithmic ones.
+
+\section*{Data Availability}
+Sentinel-2 imagery was accessed via the Microsoft Planetary Computer.
+Camp location data were compiled from publicly available humanitarian
+databases (UNHCR, HDX, OpenStreetMap). Derived features and analysis
+code are available from the author upon reasonable request.
+
+\section*{Acknowledgment}
+
+The author transparently discloses that this work was produced
+through extensive coordination of two AI systems: ChatGPT 5.2 (OpenAI)
+for research conception, experimental design, and scientific
+interpretation, and Claude Code with Opus 4.6 (Anthropic) for data processing,
+statistical modeling, code implementation, figure generation,
+literature review, and manuscript preparation. AI-generated content
+is present in all sections of this article, including text, figures,
+and code. Both systems were used iteratively in combination to obtain
+verifiable and reproducible results; all scientific claims were
+cross-verified against published peer-reviewed sources. Sentinel-2 data were accessed via the
+Microsoft Planetary Computer. The author assumes full responsibility
+for the accuracy and integrity of this work.
+
+\begin{thebibliography}{13}
+
+\bibitem{Quinn2018}
+J.~A.~Quinn \emph{et~al.}, ``Humanitarian applications of machine learning
+with remote-sensing data: Review and case study in refugee settlement
+mapping,'' \emph{Phil. Trans. R. Soc. A}, vol.~376, no.~2128, Art.~no.
+20170363, 2018, doi:~10.1098/rsta.2017.0363.
+
+\bibitem{Gella2022}
+G.~W.~Gella \emph{et~al.}, ``Mapping of dwellings in IDP/refugee settlements
+from very high-resolution satellite imagery using a mask region-based
+convolutional neural network,'' \emph{Remote Sens.}, vol.~14, no.~3,
+Art.~no.~689, 2022, doi:~10.3390/rs14030689.
+
+\bibitem{Wendt2017}
+L.~Wendt, S.~Lang, and E.~Rogenhofer, ``Monitoring of refugee and camps for
+internally displaced persons using Sentinel-2 imagery---A feasibility
+study,'' \emph{GI\_Forum}, vol.~1, pp.~172--182, 2017,
+doi:~10.1553/giscience2017\_01\_s172.
+
+\bibitem{Wernicke2023}
+K.~Wernicke, ``Deep learning for refugee camps---Mapping settlement extents
+with Sentinel-2 imagery and semantic segmentation,'' M.S.~thesis, Dept.
+Remote Sens., Univ.~W\"{u}rzburg, W\"{u}rzburg, Germany, 2023. [Online]. Available:
+\url{https://elib.dlr.de/196349/}.
+
+\bibitem{VanDenHoek2021}
+J.~Van Den Hoek and H.~K.~Friedrich, ``Satellite-based human settlement
+datasets inadequately detect refugee settlements: A critical assessment at
+thirty refugee settlements in Uganda,'' \emph{Remote Sens.}, vol.~13,
+no.~18, Art.~no.~3574, 2021, doi:~10.3390/rs13183574.
+
+\bibitem{Pesaresi2013}
+M.~Pesaresi \emph{et~al.}, ``A global human settlement layer from optical
+HR/VHR RS data: Concept and first results,'' \emph{IEEE J. Sel. Topics Appl.
+Earth Observ. Remote Sens.}, vol.~6, no.~5, pp.~2102--2131, Oct.~2013,
+doi:~10.1109/JSTARS.2013.2271445.
+
+\bibitem{Kuffer2016}
+M.~Kuffer, K.~Pfeffer, and R.~Sliuzas, ``Slums from space---15 years of
+slum mapping using remote sensing,'' \emph{Remote Sens.}, vol.~8, no.~6,
+Art.~no.~455, 2016, doi:~10.3390/rs8060455.
+
+\bibitem{Rasul2018}
+A.~Rasul \emph{et~al.}, ``Applying built-up and bare-soil indices from
+Landsat~8 to cities in dry climates,'' \emph{Land}, vol.~7, no.~3,
+Art.~no.~81, 2018, doi:~10.3390/land7030081.
+
+\bibitem{Wurm2017}
+M.~Wurm, M.~Weigand, A.~Schmitt, C.~Geiss, and H.~Taubenb\"{o}ck,
+``Exploitation of textural and morphological image features in Sentinel-2A
+data for slum mapping,'' in \emph{Proc. Joint Urban Remote Sens. Event
+(JURSE)}, Dubai, UAE, 2017, pp.~1--4, doi:~10.1109/JURSE.2017.7924586.
+
+\bibitem{Zha2003}
+Y.~Zha, J.~Gao, and S.~Ni, ``Use of normalized difference built-up index
+in automatically mapping urban areas from TM imagery,'' \emph{Int. J. Remote
+Sens.}, vol.~24, no.~3, pp.~583--594, 2003, doi:~10.1080/01431160304987.
+
+\bibitem{Radoux2016}
+J.~Radoux \emph{et~al.}, ``Sentinel-2's potential for sub-pixel landscape
+feature detection,'' \emph{Remote Sens.}, vol.~8, no.~6, Art.~no.~488, 2016,
+doi:~10.3390/rs8060488.
+
+\bibitem{Corbane2021}
+C.~Corbane \emph{et~al.}, ``Convolutional neural networks for global human
+settlements mapping from Sentinel-2 satellite imagery,'' \emph{Neural
+Comput. \& Appl.}, vol.~33, no.~12, pp.~6697--6720, 2021,
+doi:~10.1007/s00521-020-05449-7.
+
+\bibitem{Braun2019}
+A.~Braun, F.~Fakhri, and V.~Hochschild, ``Refugee camp monitoring and
+environmental change assessment of Kutupalong, Bangladesh, based on radar
+imagery of Sentinel-1 and ALOS-2,'' \emph{Remote Sens.}, vol.~11, no.~17,
+Art.~no.~2047, 2019, doi:~10.3390/rs11172047.
+
+\end{thebibliography}
+
+\end{document}
